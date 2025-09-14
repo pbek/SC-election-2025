@@ -1,0 +1,23 @@
+name: "Email test"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: nixbuild/nix-quick-install-action@v33
+    - run: |
+        nix shell nixpkgs#{pandoc,msmtp} --command scripts/send-email.sh "elections@nixos.org" "Test email please ignore" <<EOF
+        This is a test email sent by a silly workflow.
+        EOF
+      env:
+        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
